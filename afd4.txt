@@ -1,0 +1,12 @@
+PP PI II IP
+a b
+IP PI 
+II PP 
+PI IP
+PP II
+PP
+IP
+3
+babb
+aabb 
+abb
