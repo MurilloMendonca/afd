@@ -1,0 +1,3 @@
+[submodule "cpp-easy-file-stream"]
+	path = cpp-easy-file-stream
+	url = https://github.com/ploft-devs/cpp-easy-file-stream.git
