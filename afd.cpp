@@ -3,27 +3,45 @@
 #include <string>
 
 AFD::AFD(std::string arquivoAFD){
+
+    //Inicia a leitura do arquivo de texto recedbido
     FileStream a (arquivoAFD);
-    estados = a.lineValues();
-    alfabeto = a.lineValues();
-    for(int estado=0;estado<estados.size();estado++){
-        auto aux = a.lineValues();
+
+    //Na primeira linha lê-se os estados
+    this->estados = a.lineValues();
+
+    //Na segunda linha lê-se o alfabeto
+    this->alfabeto = a.lineValues();
+
+    //Para cada estado
+    for(auto estado:estados){
+
+        //Le a linha que corresponde as transições a partir do estado
+        auto transicoes = a.lineValues();
+
+        //Mapeia para qual estado cada entrada do alfabeto leva
         std::unordered_map<std::string,std::string> mapaAux;
         for(int i=0;i<alfabeto.size();i++)
-        {
-            mapaAux.insert(std::pair<std::string,std::string>(alfabeto.at(i),aux.at(i)));
-        }
-        D.insert(std::pair<std::string,std::unordered_map<std::string,std::string>>(estados.at(estado), mapaAux));
+            mapaAux.insert(std::pair<std::string,std::string>(alfabeto.at(i),transicoes.at(i)));
+
+        //Insere o mapeamento na matriz de transições
+        this->D.insert(std::pair<std::string,std::unordered_map<std::string,std::string>>(estado, mapaAux));
     }
-    estadoInicial = a.lineValues().at(0);
+
+    //Lê o estado inicial 
+    this->estadoInicial =a.lineValues().at(0);
+
+    //Lê os estados finais e insere no conjunto
     auto finais = a.lineValues();
-    for(auto s:finais){
-        estadosFinais.insert(s);
-    }
-    int numeroDePalavrasDeTeste = stoi(a.lineValues().at(0));
-    for(int i=0;i<numeroDePalavrasDeTeste;i++){
-        palavrasTeste.insert(a.lineValues().at(0));
-    }
+    for(auto s:finais)
+        this->estadosFinais.insert(s);
+
+    //Lê a quantidade de palavras de teste
+    int numeroDePalavrasDeTeste = a.nextInt();
+
+    //Insere cada palavra de teste lida no conjunto de palavras de teste
+    for(int i=0;i<numeroDePalavrasDeTeste;i++)
+        this->palavrasTeste.insert(a.nextWord());
 }
 
 void AFD::mostraAFD(){
@@ -32,7 +50,7 @@ void AFD::mostraAFD(){
         std::cout<<letra<<" ";
     std::cout<<std::endl;
     for(auto letra:alfabeto)
-        std::cout<<"____";
+        std::cout<<"______";
     std::cout<<std::endl;
     for (auto d : D) {
         (estadosFinais.find(d.first) != estadosFinais.end())? std::cout<<"*":std::cout<<" ";
@@ -46,20 +64,16 @@ void AFD::mostraAFD(){
 }
 
 bool AFD::testaPalavra(std::string palavra){
-    int p=0;
-    std::string estado = estadoInicial;
-    while (p<palavra.size()){
-        estado=D[estado][palavra.substr(p,1)];
-        p++;
-    }
-    return (estadosFinais.find(estado) != estadosFinais.end());
-
+    std::string estado = estadoInicial;                         //estado atual = estado inicial
+    for(char x:palavra)                                         //Para cada símbolo da paravra de entrada
+        estado=D[estado][std::string(1,x)];                     //estado atual = transicao(estado atual, prox())
+    return (estadosFinais.find(estado) != estadosFinais.end()); //retorna sim se o estado após o processamento estiver contido no conjuntos dos estados finais
 }
 
 void AFD::realizaTestes(){
-    for(auto palavra:palavrasTeste){
-        testaPalavra(palavra)?std::cout<<"\nO teste deu certo para a palavra ":std::cout<<"\nO teste deu errado para a palavra ";
-        std::cout<<palavra;
+    for(auto palavra:palavrasTeste){                            //Para cada palavra no conjunto de palavras teste
+        std::cout<<"\nA palavra "<<palavra;
+        testaPalavra(palavra)?std::cout<<" foi aceita":std::cout<<" foi rejeitada";
     }
     std::cout<<std::endl;
 }

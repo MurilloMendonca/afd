@@ -7,7 +7,9 @@ a b c
 e e e
 1
 4
-3
+5
 ccbabc
-ccbaabc
-acababcc
+aabbccb
+cccccccc
+ccbaabccb
+acababcccc

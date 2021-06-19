@@ -6,7 +6,9 @@ PI IP
 PP II
 PP
 IP
-3
-babb
-aabb 
+5
 abb
+bbaa
+babb
+aabbab
+abbabbabb
